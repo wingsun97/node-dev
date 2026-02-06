@@ -1,0 +1,42 @@
+###############################################################################
+# Development:
+# git push origin main -> ghcr.io/wingsun97/node-dev:latest
+#
+# Production:
+# git tag v24-slim
+# git push origin v24-slim -> ghcr.io/wingsun97/node-dev:v24-slim
+#################################################################################
+FROM node:24-slim
+
+# 安装常用工具
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    bash \
+    openssh-client \
+    vim \
+    nano \
+    ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+# 设置工作目录
+WORKDIR /app
+
+# 更改工作目录所有权
+RUN chown -R node:node /app
+
+# 初始化 pnpm 并设置缓存路径
+ENV PNPM_HOME="/home/node/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# 全局安装 pnpm
+RUN npm install -g pnpm
+
+# 默认 shell 设置为 bash
+SHELL ["/bin/bash", "-c"]
+
+# 设置默认用户为 node
+USER node
+
+# 启动命令（可根据需要自定义）
+CMD ["tail", "-f", "/dev/null"]
