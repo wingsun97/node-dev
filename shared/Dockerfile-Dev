@@ -1,10 +1,10 @@
 ###############################################################################
 # Development:
-# git push origin main -> ghcr.io/wingsun97/node-dev:latest
+# git push origin main -> ghcr.io/wingsun97/node-dev:latest-slim
 #
 # Production:
-# git tag v24-slim
-# git push origin v24-slim -> ghcr.io/wingsun97/node-dev:v24-slim
+# git tag v24
+# git push origin v24 -> ghcr.io/wingsun97/node-dev:v24-slim
 #################################################################################
 FROM node:24-slim
 

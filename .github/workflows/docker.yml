@@ -26,11 +26,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push image
+      - name: Build and push develop image
         uses: docker/build-push-action@v5
         with:
           context: ./shared
+          file: ./shared/Dockerfile-Dev
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+            ghcr.io/${{ github.repository }}:latest-slim
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-slim
+
+      - name: Build and push build image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./shared
+          file: ./shared/Dockerfile-Build
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest-alpine-build
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-alpine-build
+
+      - name: Build and push test image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./shared
+          file: ./shared/Dockerfile-Test
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest-alpine-test
+            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-alpine-test

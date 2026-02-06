@@ -1,0 +1,25 @@
+FROM node:24-alpine
+
+# Install runtime dependencies
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# 设置工作目录
+WORKDIR /app
+
+# 更改工作目录所有权
+RUN chown -R node:node /app
+
+# 设置默认用户为 node
+USER node
+
+# Environment variables for Node.js
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV UV_THREADPOOL_SIZE=16
+
+# 启动命令（默认等待挂载）
+CMD ["tail", "-f", "/dev/null"]

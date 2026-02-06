@@ -1,0 +1,46 @@
+FROM node:24-alpine
+
+# 安装常用工具
+RUN apk update && apk add --no-cache \
+    git \
+    curl \
+    bash \
+    openssh-client \
+    vim \
+    nano \
+    ca-certificates \
+    && rm -rf /var/cache/apk/*
+
+# 设置工作目录
+WORKDIR /app
+
+# 更改工作目录所有权
+RUN chown -R node:node /app
+
+# 全局安装 pnpm
+RUN npm install -g pnpm
+
+# 默认 shell 设置为 bash
+SHELL ["/bin/bash", "-c"]
+
+# 设置默认用户为 node
+USER node
+
+# Environment variables for Node.js
+ENV NODE_ENV=production
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV UV_THREADPOOL_SIZE=16
+
+# Install build script
+# 使用 cat 和 Here Document 生成 build.sh 脚本
+RUN cat << 'EOF' > /home/node/build.sh
+#!/bin/bash
+set -e
+cd /app
+pnpm install --frozen-lockfile --prod
+pnpm build
+EOF
+RUN chmod +x /home/node/build.sh
+
+# 启动命令（可根据需要自定义）
+CMD ["tail", "-f", "/dev/null"]
