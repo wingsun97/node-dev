@@ -32,14 +32,10 @@ ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV UV_THREADPOOL_SIZE=16
 
 # Install build script
-# 使用 cat 和 Here Document 生成 build.sh 脚本
-RUN cat << 'EOF' > /home/node/build.sh
-#!/bin/bash
-set -e
-cd /app
-pnpm install --frozen-lockfile --prod
-pnpm build
-EOF
+# 复制 build.sh 脚本到镜像中
+COPY --chown=node:node build.sh /home/node/build.sh
+
+# 设置脚本为可执行
 RUN chmod +x /home/node/build.sh
 
 # 启动命令（可根据需要自定义）
