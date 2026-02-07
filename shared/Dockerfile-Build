@@ -11,14 +11,14 @@ RUN apk update && apk add --no-cache \
     ca-certificates \
     && rm -rf /var/cache/apk/*
 
+# 全局安装 pnpm
+RUN npm install -g pnpm
+
 # 设置工作目录
 WORKDIR /app
 
 # 更改工作目录所有权
 RUN chown -R node:node /app
-
-# 全局安装 pnpm
-RUN npm install -g pnpm
 
 # 默认 shell 设置为 bash
 SHELL ["/bin/bash", "-c"]
@@ -31,12 +31,6 @@ ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV UV_THREADPOOL_SIZE=16
 
-# Install build script
-# 复制 build.sh 脚本到镜像中
-COPY --chown=node:node build.sh /home/node/build.sh
-
-# 设置脚本为可执行
-RUN chmod +x /home/node/build.sh
-
 # 启动命令（可根据需要自定义）
 CMD ["tail", "-f", "/dev/null"]
+

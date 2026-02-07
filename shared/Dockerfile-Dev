@@ -19,6 +19,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
+# 全局安装 pnpm
+RUN npm install -g pnpm
+
 # 设置工作目录
 WORKDIR /app
 
@@ -29,9 +32,6 @@ RUN chown -R node:node /app
 ENV PNPM_HOME="/home/node/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# 全局安装 pnpm
-RUN npm install -g pnpm
-
 # 默认 shell 设置为 bash
 SHELL ["/bin/bash", "-c"]
 
@@ -40,3 +40,4 @@ USER node
 
 # 启动命令（可根据需要自定义）
 CMD ["tail", "-f", "/dev/null"]
+
