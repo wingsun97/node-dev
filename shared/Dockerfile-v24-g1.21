@@ -1,7 +1,7 @@
-# 使用最新 Go 官方镜像作为基础
+# 使用完整 Debian Bullseye + Go 镜像
 FROM golang:1.21.3-bullseye
 
-# 安装基础工具 + curl + git + bash 等
+# 安装完整基础工具 + Git + Node 依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
@@ -17,9 +17,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     sed \
     procps \
+    coreutils \
+    util-linux \
  && rm -rf /var/lib/apt/lists/*
 
-# 安装 Node.js 24 最新版本
+# 安装 Node.js 24 最新版
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
  && apt-get install -y nodejs \
  && npm install -g pnpm \
@@ -28,7 +30,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
 # 设置工作目录
 WORKDIR /app
 
-# 创建 uid=gid=1000 的用户 node
+# 创建固定 UID/GID=1000 的用户 node
 RUN groupadd -g 1000 node \
  && useradd -m -u 1000 -g 1000 -s /bin/bash node \
  && chown -R node:node /app \
@@ -42,9 +44,9 @@ USER node
 ENV GOPATH=/home/node/go
 ENV PATH=$GOPATH/bin:/usr/local/go/bin:/usr/local/bin:$PATH
 ENV PNPM_HOME="/home/node/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
+ENV PATH="$PNPM_HOME:$PATH:$PATH"
 
-# 默认 shell 为 bash
+# 默认 shell
 SHELL ["/bin/bash", "-c"]
 
 # 默认命令保持容器存活
