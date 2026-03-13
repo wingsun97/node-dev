@@ -61,7 +61,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./shared
-          file: ./shared/Dockerfile-v24-g1.21
+          file: ./shared/Dockerfile-v24-g1.26
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:v24-g1.21
+            ghcr.io/${{ github.repository }}:v24-g1.26
