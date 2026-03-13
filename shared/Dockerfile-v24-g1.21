@@ -3,6 +3,7 @@ FROM node:24-slim
 # 安装常用工具和 Go 依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
+    wget \
     curl \
     bash \
     openssh-client \
@@ -18,10 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ENV GO_VERSION=1.21.3
 RUN curl -fsSL https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -C /usr/local -xz
 
-# 配置 Go 环境
-ENV GOPATH=/home/node/go
-ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
-
 # 全局安装 pnpm
 RUN npm install -g pnpm
 
@@ -29,19 +26,21 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 # 更改工作目录所有权
-RUN chown -R node:node /app \
-    && mkdir -p $GOPATH \
-    && chown -R node:node $GOPATH
+RUN chown -R node:node /app 
+
+# 默认 shell 设置为 bash
+# SHELL ["/bin/bash", "-c"]
+
+# 设置默认用户为 node
+USER node
+
+# 配置 Go 环境
+ENV GOPATH=/home/node/go
+ENV PATH=$GOPATH/bin:/usr/local/go/bin:$PATH
 
 # 初始化 pnpm 并设置缓存路径
 ENV PNPM_HOME="/home/node/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH:$PATH"
-
-# 默认 shell 设置为 bash
-SHELL ["/bin/bash", "-c"]
-
-# 设置默认用户为 node
-USER node
 
 # 默认启动命令
 CMD ["tail", "-f", "/dev/null"]
