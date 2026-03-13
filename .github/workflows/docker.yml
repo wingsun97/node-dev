@@ -55,3 +55,13 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository }}:latest-alpine-test
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}-alpine-test
+
+
+      - name: Build and push node and go development image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./shared
+          file: ./shared/Dockerfile-v24-g1.21
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:v24-g1.21
