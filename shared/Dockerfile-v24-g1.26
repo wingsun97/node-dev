@@ -16,6 +16,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     pkg-config \
     iputils-ping \
+    procps \
+    iproute2 \
+    net-tools \
+    lsof \
+    strace \
+    jq \
+    socat \
  && rm -rf /var/lib/apt/lists/*
 
 # 全局安装 pnpm
