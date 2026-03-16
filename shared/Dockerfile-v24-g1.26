@@ -1,30 +1,57 @@
 FROM node:24-slim
 
-# 安装常用工具
+# 是否安装额外开发/排障工具（体积较大，默认关闭）
+ARG INSTALL_EXTRA_TOOLS=0
+# 是否安装音频命令行工具（ffmpeg/sox/opus-tools，体积较大，默认关闭）
+ARG INSTALL_AUDIO_CLI_TOOLS=0
+
+# 安装基础必需工具
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git \
-    curl \
-    wget \
-    bash \
-    openssh-client \
-    vim \
-    nano \
-    ca-certificates \
-    unzip \
-    bzip2 \
-    lsb-release \
-    gnupg \
-    protobuf-compiler \
-    build-essential \
-    pkg-config \
-    iputils-ping \
-    procps \
-    iproute2 \
-    net-tools \
-    lsof \
-    strace \
-    jq \
-    socat \
+        git \
+        curl \
+        bash \
+        nano \
+        lsb-release \
+        openssh-client \
+        ca-certificates \
+        unzip \
+        bzip2 \
+        protobuf-compiler \
+        build-essential \
+        pkg-config \
+        libopus-dev \
+        libopus0 \
+        libstdc++6 \
+        libgomp1 \
+        less \
+        ripgrep \
+        netcat-openbsd \
+        redis-tools \
+        iputils-ping \
+        procps \
+        iproute2 \
+        jq \
+        socat \
+ && if [ "$INSTALL_EXTRA_TOOLS" = "1" ]; then \
+            apt-get install -y --no-install-recommends \
+                wget \
+                vim \
+                gnupg \
+                tree \
+                tmux \
+                default-mysql-client \
+                dnsutils \
+                inetutils-telnet \
+                net-tools \
+                lsof \
+                strace; \
+        fi \
+ && if [ "$INSTALL_AUDIO_CLI_TOOLS" = "1" ]; then \
+            apt-get install -y --no-install-recommends \
+                opus-tools \
+                ffmpeg \
+                sox; \
+        fi \
  && rm -rf /var/lib/apt/lists/*
 
 # 全局安装 pnpm
@@ -38,6 +65,7 @@ RUN curl -fsSL https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz -o /tmp/go.t
  && rm /tmp/go.tgz
 
 # gRPC plugins
+# protoc-gen-go / protoc-gen-go-grpc 由容器内手动安装到 /home/node/go/bin
 #RUN /usr/local/go/bin/go install google.golang.org/protobuf/cmd/protoc-gen-go@latest \
 # && /usr/local/go/bin/go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
@@ -63,3 +91,4 @@ ENV PATH="/usr/local/go/bin:$GOPATH/bin:$PNPM_HOME:$PATH"
 
 # 启动命令（可根据需要自定义）
 CMD ["tail", "-f", "/dev/null"]
+
