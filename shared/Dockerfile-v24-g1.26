@@ -1,7 +1,7 @@
 FROM node:24-slim
 
 # 是否安装额外开发/排障工具（体积较大，默认关闭）
-ARG INSTALL_EXTRA_TOOLS=0
+ARG INSTALL_EXTRA_TOOLS=1
 # 是否安装音频命令行工具（ffmpeg/sox/opus-tools，体积较大，默认关闭）
 ARG INSTALL_AUDIO_CLI_TOOLS=0
 
@@ -55,7 +55,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # 全局安装 pnpm
-RUN npm install -g pnpm
+# RUN npm install -g pnpm
+RUN corepack enable pnpm && \
+    corepack prepare pnpm@latest --activate
 
 # 安装 Go
 ENV GO_VERSION=1.26.1
@@ -82,7 +84,7 @@ SHELL ["/bin/bash", "-c"]
 USER node
 
 # 初始化 pnpm 并设置缓存路径
-ENV PNPM_HOME="/home/node/.local/share/pnpm"
+# ENV PNPM_HOME="/home/node/.local/share/pnpm"
 
 # 配置 Go 环境变量
 ENV GOPATH=/home/node/go
