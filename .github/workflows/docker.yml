@@ -36,27 +36,6 @@ jobs:
             ghcr.io/${{ github.repository }}:latest-slim
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}-slim
 
-      - name: Build and push build image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./shared
-          file: ./shared/Dockerfile-Build
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest-alpine-build
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-alpine-build
-
-      - name: Build and push test image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./shared
-          file: ./shared/Dockerfile-Test
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:latest-alpine-test
-            ghcr.io/${{ github.repository }}:${{ github.ref_name }}-alpine-test
-
-
       - name: Build and push node and go development image
         uses: docker/build-push-action@v5
         with:
@@ -65,3 +44,12 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:v24-g1.26
+
+      - name: Build and push node test image for neptu
+        uses: docker/build-push-action@v5
+        with:
+          context: ./shared
+          file: ./shared/Dockerfile-neptu
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:v24-neptu

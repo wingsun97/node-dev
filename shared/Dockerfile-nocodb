@@ -1,0 +1,4 @@
+FROM nocodb/nocodb:latest
+
+# 安装 MySQL 驱动
+RUN npm install mysql mysql2 --save
